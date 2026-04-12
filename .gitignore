@@ -1,0 +1,25 @@
+# Dependencies
+node_modules/
+backend/node_modules/
+
+# Environment — NEVER commit secrets
+.env
+backend/.env
+*.env.local
+*.env.*.local
+
+# Build outputs
+dist/
+build/
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
