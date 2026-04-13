@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <defs>
+    <!-- Outer neon green glow -->
+    <filter id="glow-g" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="1.4" result="blur1"/>
+      <feGaussianBlur stdDeviation="2.8" result="blur2"/>
+      <feMerge>
+        <feMergeNode in="blur2"/>
+        <feMergeNode in="blur1"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background: near-black with very subtle green tint -->
+  <rect width="32" height="32" rx="4" fill="#050f05"/>
+
+  <!-- Border: neon green frame -->
+  <rect x="1" y="1" width="30" height="30" rx="3.5"
+        fill="none" stroke="#00ff00" stroke-width="1.2" opacity="0.75"/>
+
+  <!-- Scanline texture (every 4px) -->
+  <line x1="0" y1="4"  x2="32" y2="4"  stroke="#00ff00" stroke-width="0.3" opacity="0.08"/>
+  <line x1="0" y1="8"  x2="32" y2="8"  stroke="#00ff00" stroke-width="0.3" opacity="0.08"/>
+  <line x1="0" y1="12" x2="32" y2="12" stroke="#00ff00" stroke-width="0.3" opacity="0.08"/>
+  <line x1="0" y1="16" x2="32" y2="16" stroke="#00ff00" stroke-width="0.3" opacity="0.08"/>
+  <line x1="0" y1="20" x2="32" y2="20" stroke="#00ff00" stroke-width="0.3" opacity="0.08"/>
+  <line x1="0" y1="24" x2="32" y2="24" stroke="#00ff00" stroke-width="0.3" opacity="0.08"/>
+  <line x1="0" y1="28" x2="32" y2="28" stroke="#00ff00" stroke-width="0.3" opacity="0.08"/>
+
+  <!-- 'V' glyph — bold angled strokes, glowing green -->
+  <polyline
+    points="7,7 16,25 25,7"
+    fill="none"
+    stroke="#00ff00"
+    stroke-width="3.2"
+    stroke-linecap="square"
+    stroke-linejoin="miter"
+    filter="url(#glow-g)"
+  />
+</svg>

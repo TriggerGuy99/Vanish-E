@@ -185,6 +185,39 @@ const S = {
     marginRight: '6px',
     verticalAlign: 'middle',
   }),
+  nukeBtn: {
+    background: 'transparent',
+    border: '2px solid #ff0000',
+    color: '#ff0000',
+    fontFamily: '"Fira Code", monospace',
+    fontSize: '13px',
+    fontWeight: 700,
+    letterSpacing: '0.25em',
+    padding: '13px 36px',
+    cursor: 'pointer',
+    textTransform: 'uppercase',
+    animation: 'neonPulse 1.2s ease-in-out infinite',
+    position: 'relative',
+    marginBottom: '28px',
+  },
+  vaultSterilized: {
+    position: 'fixed',
+    top: '28px',
+    left: '50%',
+    transform: 'translateX(-50%)',
+    background: '#0a0000',
+    border: '2px solid #ff0000',
+    color: '#ff0000',
+    fontFamily: '"Fira Code", monospace',
+    fontSize: '15px',
+    fontWeight: 700,
+    letterSpacing: '0.35em',
+    padding: '14px 40px',
+    boxShadow: '0 0 40px rgba(255,0,0,0.6), 0 0 80px rgba(255,0,0,0.25)',
+    zIndex: 9999,
+    animation: 'glitchReveal 0.08s steps(1) infinite',
+    whiteSpace: 'nowrap',
+  },
 };
 
 /* ── Helpers ─────────────────────────────────────────────── */
@@ -216,6 +249,9 @@ export default function AdminDashboard() {
   // ── UI ──
   const [refreshHover, setRefreshHover] = useState(false);
   const [logoutHover,  setLogoutHover]  = useState(false);
+  const [nukeHover,    setNukeHover]    = useState(false);
+  const [purging,      setPurging]      = useState(false);
+  const [nukeNotif,    setNukeNotif]    = useState(false);
 
   // ── inject keyframes once ──
   useEffect(() => {
@@ -240,6 +276,26 @@ export default function AdminDashboard() {
       @keyframes scanPulse {
         0%, 100% { box-shadow: 0 0 0px rgba(255,0,0,0); }
         50%      { box-shadow: 0 0 12px rgba(255,0,0,0.5); }
+      }
+      @keyframes neonPulse {
+        0%, 100% {
+          box-shadow: 0 0 6px #ff0000, 0 0 14px rgba(255,0,0,0.5), inset 0 0 8px rgba(255,0,0,0.1);
+          border-color: #ff0000;
+        }
+        50% {
+          box-shadow: 0 0 18px #ff0000, 0 0 40px rgba(255,0,0,0.7), 0 0 70px rgba(255,0,0,0.3), inset 0 0 20px rgba(255,0,0,0.2);
+          border-color: #ff4444;
+        }
+      }
+      @keyframes glitchReveal {
+        0%   { clip-path: inset(10% 0 80% 0); transform: translateX(-50%) skewX(-3deg); opacity: 0.95; }
+        10%  { clip-path: inset(0% 0 0% 0);  transform: translateX(calc(-50% + 4px)) skewX(2deg);  opacity: 1; }
+        20%  { clip-path: inset(15% 0 30% 0); transform: translateX(calc(-50% - 3px)) skewX(-1deg); opacity: 0.9; }
+        35%  { clip-path: inset(0% 0 0% 0);  transform: translateX(-50%) skewX(0deg); opacity: 1; }
+        50%  { clip-path: inset(5% 0 60% 0); transform: translateX(calc(-50% + 2px)) skewX(1deg);  opacity: 0.95; }
+        65%  { clip-path: inset(0% 0 0% 0);  transform: translateX(-50%) skewX(-1deg); opacity: 1; }
+        80%  { clip-path: inset(20% 0 10% 0); transform: translateX(calc(-50% - 2px)) skewX(2deg); opacity: 0.9; }
+        100% { clip-path: inset(0% 0 0% 0);  transform: translateX(-50%) skewX(0deg); opacity: 1; }
       }
     `;
     document.head.appendChild(style);
@@ -319,6 +375,47 @@ export default function AdminDashboard() {
   const handleLogout = () => {
     localStorage.removeItem('vanish_admin_token');
     navigate('/admin');
+  };
+
+  const handlePurge = async () => {
+    const confirmed = window.confirm(
+      'WARNING: THIS WILL PERMANENTLY DELETE ALL ENCRYPTED DROPS. PROCEED?'
+    );
+    if (!confirmed) return;
+
+    const token = localStorage.getItem('vanish_admin_token');
+    if (!token) return;
+
+    setPurging(true);
+    try {
+      const res = await fetch(`${API}/api/admin/purge`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (res.status === 401 || res.status === 403) {
+        localStorage.removeItem('vanish_admin_token');
+        navigate('/admin');
+        return;
+      }
+
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error || 'PURGE OPERATION FAILED.');
+        return;
+      }
+
+      // Show glitchy notification
+      setNukeNotif(true);
+      setTimeout(() => setNukeNotif(false), 3200);
+
+      // Refresh telemetry so count resets to 0
+      await fetchTelemetry();
+    } catch {
+      setError('NETWORK ERROR — Purge request failed.');
+    } finally {
+      setPurging(false);
+    }
   };
 
   const connected = !error && !loading;
@@ -406,6 +503,14 @@ export default function AdminDashboard() {
 
   return (
     <div style={S.wrapper}>
+
+      {/* VAULT STERILIZED glitch notification */}
+      {nukeNotif && (
+        <div id="vault-sterilized-notif" style={S.vaultSterilized}>
+          ☢&nbsp;&nbsp;VAULT STERILIZED&nbsp;&nbsp;☢
+        </div>
+      )}
+
       {/* Top Bar */}
       <div style={S.topBar}>
         <div style={S.topBarLeft}>
@@ -478,6 +583,24 @@ export default function AdminDashboard() {
             <span style={{ ...S.metaCardValue, color: T.red }}>LEVEL-1 READ-ONLY</span>
           </div>
         </div>
+
+        {/* NUKE Button */}
+        <button
+          id="admin-nuke-btn"
+          onClick={handlePurge}
+          disabled={purging}
+          onMouseEnter={() => setNukeHover(true)}
+          onMouseLeave={() => setNukeHover(false)}
+          style={{
+            ...S.nukeBtn,
+            ...(nukeHover && !purging
+              ? { background: 'rgba(255,0,0,0.12)', color: '#ff4444' }
+              : {}),
+            ...(purging ? { opacity: 0.55, cursor: 'not-allowed', animation: 'none' } : {}),
+          }}
+        >
+          {purging ? '☢  STERILIZING...' : '☢  UNILATERAL PURGE (NUKE VAULT)'}
+        </button>
 
         {/* Manual Refresh */}
         <button

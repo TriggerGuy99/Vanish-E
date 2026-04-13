@@ -34,6 +34,7 @@ export default function SenderPage() {
   const [copiedReal, setCopiedReal] = useState(false); // Level 3
   const [copiedDuress, setCopiedDuress] = useState(false); // Level 3
   const [progress, setProgress] = useState(0);
+  const [showAutoPurge, setShowAutoPurge] = useState(false);
   const [errMsg, setErrMsg] = useState('');
   const stegoUrlRef = useRef(null);
 
@@ -122,6 +123,8 @@ export default function SenderPage() {
         setDropId(id);
         setMagicLink(link);
         setPhase('done');
+        setShowAutoPurge(true);
+        setTimeout(() => setShowAutoPurge(false), 7000);
       }, 300);
     } catch (err) {
       clearInterval(iv);
@@ -149,7 +152,7 @@ export default function SenderPage() {
     setDropId(''); setCopied(false); setCopiedId(false);
     setCopiedReal(false); setCopiedDuress(false);
     setStegoBlob(null); setStegoKey(''); setCopiedKey(false);
-    setProgress(0); setErrMsg('');
+    setProgress(0); setErrMsg(''); setShowAutoPurge(false);
     if (stegoUrlRef.current) { URL.revokeObjectURL(stegoUrlRef.current); stegoUrlRef.current = null; }
   };
 
@@ -360,6 +363,17 @@ export default function SenderPage() {
             {magicLink}
           </div>
         </div>
+
+        {/* Auto-purge notification with fade transition */}
+        <div style={{
+          fontSize: '10px', color: C.green,
+          letterSpacing: '1px', textAlign: 'center', marginBottom: '12px',
+          opacity: showAutoPurge ? 0.6 : 0, transition: 'opacity 1s ease',
+          pointerEvents: 'none', height: '14px', textShadow: `0 0 5px ${C.greenGlow}`
+        }}>
+          ◈ NOTE: MESSAGE AUTO-PURGES IN 24 HOURS (DB TTL)
+        </div>
+
         <NeonButton id="btn-copy" onClick={copyLink}>
           {copied ? '✓ COPIED TO CLIPBOARD' : '⧉ COPY MAGIC LINK'}
         </NeonButton>

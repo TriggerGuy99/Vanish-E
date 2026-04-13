@@ -3,7 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const { createDrop, readAndDestroy } = require('./controllers/messageController');
-const { login, getTelemetry }         = require('./controllers/adminController');
+const { login, getTelemetry, purgeVault }    = require('./controllers/adminController');
 const verifyToken                      = require('./middleware/auth');
 
 const app = express();
@@ -17,8 +17,9 @@ app.post('/api/messages', createDrop);
 app.get('/api/messages/:id', readAndDestroy);
 
 // ── Admin Routes ────────────────────────────────────────────
-app.post('/api/admin/login',     login);                       // public
-app.get('/api/admin/telemetry',  verifyToken, getTelemetry);   // protected
+app.post('/api/admin/login',     login);                         // public
+app.get('/api/admin/telemetry',  verifyToken, getTelemetry);     // protected
+app.delete('/api/admin/purge',   verifyToken, purgeVault);       // protected
 
 // ── MongoDB Connection & Server Start ──────────────────────
 const MONGO_URI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/vanish-e';

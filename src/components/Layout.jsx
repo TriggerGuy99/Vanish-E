@@ -63,9 +63,10 @@ const NavLink = ({ to, label, sub, active }) => (
 /* ─── top navbar ─── */
 export const Navbar = () => {
   const { pathname } = useLocation();
-  const isSender  = pathname === '/';
-  const isStego   = pathname === '/stego-drop';
-  const isReceiver = !isSender && !isStego;
+  const isSender   = pathname === '/';
+  const isStego    = pathname === '/stego-drop';
+  const isHowToUse = pathname === '/how-to-use';
+  const isReceiver = !isSender && !isStego && !isHowToUse;
 
   return (
     <header style={{
@@ -98,9 +99,10 @@ export const Navbar = () => {
 
       {/* nav tabs */}
       <nav style={{ display: 'flex', justifyContent: 'center', gap: '2px', paddingBottom: '0' }}>
-        <NavLink to="/"           label="◆ DROP ZONE"       sub="CREATE" active={isSender}  />
+        <NavLink to="/"           label="◆ DROP ZONE"       sub="CREATE" active={isSender}   />
         <NavLink to="/drop/"      label="◆ ACCESS TERMINAL" sub="READ"   active={isReceiver} />
-        <NavLink to="/stego-drop" label="◆ STEGO TERMINAL"  sub="LSB"    active={isStego}   />
+        <NavLink to="/stego-drop" label="◆ STEGO TERMINAL"  sub="LSB"    active={isStego}    />
+        <NavLink to="/how-to-use" label="◆ FIELD MANUAL"    sub="HELP"   active={isHowToUse} />
       </nav>
     </header>
   );
@@ -120,6 +122,9 @@ export const Footer = () => (
     </div>
     <div style={{ fontSize: '9px', color: C.gray, opacity: 0.4, letterSpacing: '2px' }}>
       NO LOGS • NO TRACES • NO EVIDENCE
+    </div>
+    <div style={{ fontSize: '9px', color: C.gray, opacity: 0.3, letterSpacing: '2px', marginTop: '8px' }}>
+      MADE BY TRIGGERGUY💚 // SILENCE IS THE LOUDEST ENCRYPTION
     </div>
   </footer>
 );

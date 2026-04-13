@@ -68,4 +68,22 @@ const getTelemetry = async (req, res) => {
   }
 };
 
-module.exports = { login, getTelemetry };
+/* ── DELETE /api/admin/purge ───────────────────────────────────────────────
+   Protected by verifyToken middleware.
+   Permanently deletes every encrypted drop from the vault.
+   Returns: { deleted, message }                                              */
+const purgeVault = async (req, res) => {
+  try {
+    const result = await Message.deleteMany({});
+    console.log(`[AdminController] VAULT PURGED — ${result.deletedCount} drops deleted.`);
+    return res.status(200).json({
+      deleted: result.deletedCount,
+      message: 'VAULT STERILIZED',
+    });
+  } catch (err) {
+    console.error('[AdminController] purgeVault error:', err.message);
+    return res.status(500).json({ error: 'Purge operation failed.' });
+  }
+};
+
+module.exports = { login, getTelemetry, purgeVault };

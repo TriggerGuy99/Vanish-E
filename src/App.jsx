@@ -8,8 +8,12 @@ import ReceiverPage    from './pages/ReceiverPage.jsx';
 import AdminLogin      from './pages/AdminLogin.jsx';
 import AdminDashboard  from './pages/AdminDashboard.jsx';
 import StegoReceiverPage from './pages/StegoReceiverPage.jsx';
+import HowToUsePage      from './pages/HowToUsePage.jsx';
+import useDynamicFavicon from './utils/useDynamicFavicon.js';
 
 export default function App() {
+  useDynamicFavicon();
+
   useEffect(() => {
     injectKeyframes();
   }, []);
@@ -50,6 +54,7 @@ export default function App() {
                 <Route path="/drop/:id"   element={<ReceiverPage />}     />
                 <Route path="/drop/"      element={<ReceiverPage />}     />
                 <Route path="/stego-drop" element={<StegoReceiverPage />} />
+                <Route path="/how-to-use" element={<HowToUsePage />}     />
               </Routes>
             </main>
 
