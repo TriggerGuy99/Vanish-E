@@ -3,8 +3,8 @@ const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const { createDrop, readAndDestroy } = require('./controllers/messageController');
-const { login, getTelemetry, purgeVault }    = require('./controllers/adminController');
-const verifyToken                      = require('./middleware/auth');
+const { login, getTelemetry, purgeVault } = require('./controllers/adminController');
+const verifyToken = require('./middleware/auth');
 
 const app = express();
 
@@ -16,10 +16,12 @@ app.use(express.json());
 app.post('/api/messages', createDrop);
 app.get('/api/messages/:id', readAndDestroy);
 
+app.get('/api/health', (req, res) => res.status(200).json({ status: 'VAULT_ONLINE', time: new Date() }));
+
 // ── Admin Routes ────────────────────────────────────────────
-app.post('/api/admin/login',     login);                         // public
-app.get('/api/admin/telemetry',  verifyToken, getTelemetry);     // protected
-app.delete('/api/admin/purge',   verifyToken, purgeVault);       // protected
+app.post('/api/admin/login', login);                         // public
+app.get('/api/admin/telemetry', verifyToken, getTelemetry);     // protected
+app.delete('/api/admin/purge', verifyToken, purgeVault);       // protected
 
 // ── MongoDB Connection & Server Start ──────────────────────
 const MONGO_URI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/vanish-e';
