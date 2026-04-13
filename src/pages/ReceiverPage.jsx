@@ -5,7 +5,7 @@ import axios from 'axios';
 import { C } from '../globals.js';
 import { NeonInput, NeonButton, Cursor } from '../components/ui.jsx';
 
-const API_BASE = `${import.meta.env.VITE_API_URL}/api`;
+const API_BASE = import.meta.env.VITE_API_URL ?${import.meta.env.VITE_API_URL}/api: 'http://localhost:5000/api';
 
 /* ─── ReceiverPage: fetch, decrypt, burn-sequence ─── */
 export default function ReceiverPage() {
