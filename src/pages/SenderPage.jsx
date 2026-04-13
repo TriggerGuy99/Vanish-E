@@ -5,7 +5,7 @@ import { C } from '../globals.js';
 import { NeonInput, NeonButton, Cursor } from '../components/ui.jsx';
 import { encodeMessageInImage } from '../utils/steganography.js';
 
-const API_BASE = import.meta.env.VITE_API_URL ?${import.meta.env.VITE_API_URL}/api: 'http://localhost:5000/api';
+const API_BASE = import.meta.env.VITE_API_URL ? `${import.meta.env.VITE_API_URL}/api` : 'http://localhost:5000/api';
 
 /* ── Carrier images served from /public/stego-images/ — all files ── */
 const STEGO_IMAGES = [
