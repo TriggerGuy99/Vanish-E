@@ -102,7 +102,6 @@ export const Navbar = () => {
         <NavLink to="/"           label="◆ DROP ZONE"       sub="CREATE" active={isSender}   />
         <NavLink to="/drop/"      label="◆ ACCESS TERMINAL" sub="READ"   active={isReceiver} />
         <NavLink to="/stego-drop" label="◆ STEGO TERMINAL"  sub="LSB"    active={isStego}    />
-        <NavLink to="/how-to-use" label="◆ FIELD MANUAL"    sub="HELP"   active={isHowToUse} />
       </nav>
     </header>
   );
