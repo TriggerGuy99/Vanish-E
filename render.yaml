@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: vanish-e-backend
+    env: node
+    rootDir: backend
+    branch: main
+    buildCommand: npm install
+    # Update this if your start command is different (e.g., npm start)
+    startCommand: node server.js 
+    envVars:
+      - key: NODE_ENV
+        value: production
+      # You can leave sensitive variables (like MONGO_URI) out of this file 
+      # and still manage them manually in the Render dashboard for security.
